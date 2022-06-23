@@ -13,9 +13,6 @@ CORS(app, supports_credentials=True)
 @app.route('/api/index', methods=['GET'])
 def getlist():
     profile = session.get('email')
-    print(profile)
-    coock = request.cookies.get('username')
-    print('coock', coock)
     if 'email' in session:
         data = getAll(profile=profile)
         return data
@@ -50,7 +47,6 @@ def additem():
 
 
 @app.route('/api/delitem', methods=['POST'])
-#@cross_origin(supports_credentials=True)
 def delitem():
     content = request.json
     if deleteEvent(content=content) == True:
@@ -59,7 +55,6 @@ def delitem():
 
 
 @app.route('/api/edititem', methods=['POST'])
-#@cross_origin(supports_credentials=True)
 def edititem():
     content = request.json
     if editItem(content=content) == True:
@@ -68,9 +63,10 @@ def edititem():
 
 
 @app.route('/api/register', methods=['POST'])
-#@cross_origin(supports_credentials=True)
 def register():
     content = request.json
     if addUser(content=content) == True:
         print("EDIT EVENT: ", content)
         return Response("RegisterOK", status=200)
+
+

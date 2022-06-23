@@ -3,7 +3,7 @@ from pymongo import MongoClient
 from bson import json_util
 
 
-cluster = MongoClient("localhost", 27017)
+cluster = MongoClient("mongodb://62.3.58.53", 27017)
 # Кластер
 db = cluster["lebovsky"]
 # Коллекции
@@ -14,6 +14,7 @@ idCol = db["id"]
 
 def editsumm(Email1, Email2, oldmoney, newmoney):
     user1 = usersCol.find({"Email": f"{Email1}"})
+    print(user1)
     users1money = int(list(user1)[0]["money"])
     user2 = usersCol.find({"Email": f"{Email2}"})
     users2money = int(list(user2)[0]["money"])

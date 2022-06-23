@@ -44,21 +44,28 @@ def addEvent(content):
     money = int(content["money"])
     Email1 = content["Email1"]
     Email2 = content["Email2"]
+
     user1 = list(usersCol.find({"Email": f"{Email1}"}))
     user2 = list(usersCol.find({"Email": f"{Email2}"}))
-    print(user1, user2)
+
     users1money = int(user1[0]["money"])
     users2money = int(user2[0]["money"])
     user1name = user1[0]["name"]
     user2name = user2[0]["name"]
+    user1firstname = user1[0]["firstname"]
+    user2firstname = user2[0]["firstname"]
+
     oid = newID()
+
     event = {
         "DP": DP,
         "money": money,
         "name1": user1name,
+        "firstname1": user1firstname,
         "Email1": Email1,
-        "Email2": Email2,
         "name2": user2name,
+        "firstname2": user2firstname,
+        "Email2": Email2,
         "id": oid,
         "commets": ""
     }
