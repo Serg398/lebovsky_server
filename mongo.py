@@ -2,6 +2,7 @@ import json
 from pymongo import MongoClient
 from bson import json_util
 from money import editsumm
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 cluster = MongoClient("mongodb://62.3.58.53", 27017)
@@ -12,10 +13,38 @@ idCol = db["id"]
 connectCol = db["userConnect"]
 
 
-def getEmail(useremail):
-    email = list(usersCol.find({"Email": f"{useremail}"}))
-    if email != []:
-        return True
+def getAll(profile):
+    account = profile
+    users = usersCol.find()
+    dataAccount = getAccount(account=account)
+    usersList = list(users)
+    events = eventCol.find().sort("id", -1)
+    eventsList = list(events)
+    id = idCol.find()
+    idList = list(id)
+    res = {
+        "users": usersList,
+        "events": eventsList,
+        "id": idList,
+        'account': dataAccount
+    }
+    return json.loads(json_util.dumps(res))
+
+
+
+def setAccount():
+    return
+
+
+def getAccount(account):
+    dataAccount = list(usersCol.find({"Email": f"{account}"}))
+    dataAccount[0].pop('pass')
+    oAccount = {
+                'data': dataAccount,
+                'settings': {'ok': 1, 'no': 2},
+                'history': []
+                }
+    return oAccount
 
 
 def newID():
@@ -26,17 +55,7 @@ def newID():
     return returnID
 
 
-def getAll(profile):
-    email = profile
-    users = usersCol.find()
-    dataProfile = list(usersCol.find({"Email": f"{email}"}))
-    usersList = list(users)
-    events = eventCol.find().sort("id", -1)
-    eventsList = list(events)
-    id = idCol.find()
-    idList = list(id)
-    res = ({"users": usersList, "events": eventsList, "id": idList, "account": dataProfile})
-    return json.loads(json_util.dumps(res))
+
 
 
 def addEvent(content):
@@ -44,19 +63,15 @@ def addEvent(content):
     money = int(content["money"])
     Email1 = content["Email1"]
     Email2 = content["Email2"]
-
     user1 = list(usersCol.find({"Email": f"{Email1}"}))
     user2 = list(usersCol.find({"Email": f"{Email2}"}))
-
     users1money = int(user1[0]["money"])
     users2money = int(user2[0]["money"])
     user1name = user1[0]["name"]
     user2name = user2[0]["name"]
     user1firstname = user1[0]["firstname"]
     user2firstname = user2[0]["firstname"]
-
     oid = newID()
-
     event = {
         "DP": DP,
         "money": money,
@@ -108,19 +123,23 @@ def editItem(content):
         return True
 
 
-def addUser(content):
+def registrationM(content):
+    contentPass = content['pass']
+    contentPassHash = generate_password_hash(contentPass)
+    content['pass'] = contentPassHash
     content["money"] = 0
     usersCol.insert_one(content)
     return True
 
-def auth2(content):
+
+def loginM(content):
     email = content["Email"]
     passw = content["pass"]
     usersCol.find({"Email": f"{email}"})
-    resp = list(usersCol.find({"Email": f"{email}"}))
-    if resp != []:
-        resppass = resp[0]["pass"]
-        if resppass == passw:
+    respM = list(usersCol.find({"Email": f"{email}"}))
+    if respM != []:
+        resppass = respM[0]["pass"]
+        if check_password_hash(resppass, passw) == True:
             return True
         else:
             return False
