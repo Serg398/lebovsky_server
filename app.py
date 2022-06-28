@@ -90,4 +90,3 @@ def register():
         print("Новый пользователь: ", content)
         return Response("RegisterOK", status=200)
 
-

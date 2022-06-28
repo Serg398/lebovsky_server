@@ -71,8 +71,8 @@ def deleteEvent(content):
     users1money = int(list(user1)[0]["money"])
     user2 = profileCol.find({"email": f"{email2}"})
     users2money = int(list(user2)[0]["money"])
-    usersCol.update_one({"email": f"{email1}"}, {'$set': {'money': users1money - money}})
-    usersCol.update_one({"email": f"{email2}"}, {'$set': {'money': users2money + money}})
+    profileCol.update_one({"email": f"{email1}"}, {'$set': {'money': users1money - money}})
+    profileCol.update_one({"email": f"{email2}"}, {'$set': {'money': users2money + money}})
     eventCol.delete_one({'id': delevent})
     return True
 
