@@ -1,7 +1,19 @@
-from flask import Flask, jsonify, request, Response, session,   make_response
+from flask import Flask, jsonify, request, Response, session
 from flask_cors import CORS
-from mongo import getAll, addEvent, deleteEvent, editItem, registrationM, loginM
+from mongo import getAll
+from events import addEvent, deleteEvent, editItem
+from profile import newProfile
+from pymongo import MongoClient
+from werkzeug.security import generate_password_hash, check_password_hash
 
+
+cluster = MongoClient("mongodb://62.3.58.53", 27017)
+db = cluster["lebovsky"]
+usersCol = db["users"]
+eventCol = db["events"]
+idCol = db["id"]
+connectCol = db["userConnect"]
+profileCol = db["profile"]
 
 
 app = Flask(__name__)
@@ -24,20 +36,28 @@ def getlist():
 
 @app.route('/api/login', methods=['POST'])
 def login():
-    if request.method == 'POST':
-        content = request.json
-        if loginM(content=content) == True:
-            session['email'] = content['Email']
-            return jsonify({"text": "render(index)", "status": 200})
+    content = request.json
+    email = content["Email"]
+    print("Запрос на вход: ", email)
+    passw = content["pass"]
+    profileMongo = list(profileCol.find({"email": f"{email}"}))
+    if profileMongo == []:
+        return jsonify({"text": "Пользователь не найден", "status": 204})
+    else:
+        passProfileMongo = profileMongo[0]["passwd"]
+        if check_password_hash(passProfileMongo, passw) == True:
+            session['email'] = email
+            print("Вход: ", email)
+            return jsonify({"text": "Добро пожаловать", "status": 200})
         else:
-            return jsonify({"text": "Такого пользователя не существует", "status": 204})
+            return jsonify({"text": "Неверный логин или пароль", "status": 204})
 
 
 @app.route('/api/logout', methods=['POST'])
 def logout():
     if request.method == 'POST':
         session.pop('email', None)
-        resp = jsonify({"text": "render(auth)", "status": 204})
+        resp = jsonify({"text": "logout", "status": 204})
         resp.set_cookie('email', expires=0)
         return resp
 
@@ -66,7 +86,8 @@ def edititem():
 @app.route('/api/register', methods=['POST'])
 def register():
     content = request.json
-    if registrationM(content=content) == True:
+    if newProfile(content=content) == True:
+        print("Новый пользователь: ", content)
         return Response("RegisterOK", status=200)
 
 
