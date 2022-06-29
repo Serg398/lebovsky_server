@@ -4,7 +4,7 @@ from bson import json_util
 from money import editsumm
 
 
-cluster = MongoClient("mongodb://62.3.58.53", 27017)
+cluster = MongoClient("mongodb://127.0.0.1", 27017)
 db = cluster["lebovsky"]
 usersCol = db["users"]
 eventCol = db["events"]

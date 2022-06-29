@@ -2,7 +2,7 @@ from pymongo import MongoClient
 from werkzeug.security import generate_password_hash, check_password_hash
 
 
-cluster = MongoClient("mongodb://62.3.58.53", 27017)
+cluster = MongoClient("mongodb://127.0.0.1", 27017)
 db = cluster["lebovsky"]
 usersCol = db["users"]
 eventCol = db["events"]

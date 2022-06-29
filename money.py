@@ -3,7 +3,7 @@ from pymongo import MongoClient
 from bson import json_util
 
 
-cluster = MongoClient("mongodb://62.3.58.53", 27017)
+cluster = MongoClient("mongodb://127.0.0.1", 27017)
 # Кластер
 db = cluster["lebovsky"]
 # Коллекции
