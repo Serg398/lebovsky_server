@@ -22,14 +22,17 @@ def getAll(profile):
             'money': itemUser['money'],
             'email': itemUser['email']
         })
-    dataAccount = setAccount(account=account)
-    events = list(eventCol.find().sort("id", -1))
-    res = {
-        'users': users,
-        "events": events,
-        'account': dataAccount
-    }
-    return json.loads(json_util.dumps(res))
+    try:
+        dataAccount = setAccount(account=account)
+        events = list(eventCol.find().sort("id", -1))
+        res = {
+            'users': users,
+            "events": events,
+            'account': dataAccount
+        }
+        return json.loads(json_util.dumps(res))
+    except:
+        return False
 
 
 def setAccount(account):

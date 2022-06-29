@@ -7,7 +7,7 @@ from pymongo import MongoClient
 from werkzeug.security import generate_password_hash, check_password_hash
 
 
-cluster = MongoClient("mongodb://62.3.58.53", 27017)
+cluster = MongoClient("mongodb://127.0.0.1", 27017)
 db = cluster["lebovsky"]
 usersCol = db["users"]
 eventCol = db["events"]
@@ -23,15 +23,17 @@ cors = CORS(app, resources={r"/api": {"origins": "*", "allow_headers": "*", "exp
 CORS(app, supports_credentials=True)
 
 
+
 @app.route('/api/index', methods=['GET'])
 def getlist():
     profile = session.get('email')
     print(profile)
     if 'email' in session:
-        data = getAll(profile=profile)
-        return data
-    else:
-        return jsonify({"text": "render(auth)", "status": 204})
+        if getAll(profile=profile) == False:
+            return jsonify({"text": "render(auth)", "status": 204})
+        else:
+            return getAll(profile=profile)
+
 
 
 @app.route('/api/login', methods=['POST'])
@@ -89,4 +91,3 @@ def register():
     if newProfile(content=content) == True:
         print("Новый пользователь: ", content)
         return Response("RegisterOK", status=200)
-

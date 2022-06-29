@@ -22,7 +22,7 @@ def newProfile(content):
         "passwd": contentPassHash,
         "money": 0,
         "email": content["Email"],
-        "settings": [{"city": "Белгород"}],
+        "settings": [{"city": "Белгород"}]
     }
     if profileCol.insert_one(profile):
         return True
