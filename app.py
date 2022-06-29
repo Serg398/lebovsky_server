@@ -1,5 +1,9 @@
+import os
+
 from flask import Flask, jsonify, request, Response, session
 from flask_cors import CORS
+from werkzeug.utils import secure_filename
+
 from mongo import getAll
 from events import addEvent, deleteEvent, editItem
 from profile import newProfile
@@ -23,7 +27,6 @@ cors = CORS(app, resources={r"/api": {"origins": "*", "allow_headers": "*", "exp
 CORS(app, supports_credentials=True)
 
 
-
 @app.route('/api/index', methods=['GET'])
 def getlist():
     profile = session.get('email')
@@ -33,6 +36,8 @@ def getlist():
             return jsonify({"text": "render(auth)", "status": 204})
         else:
             return getAll(profile=profile)
+    else:
+        return jsonify({"text": "render(auth)", "status": 204})
 
 
 
@@ -91,3 +96,12 @@ def register():
     if newProfile(content=content) == True:
         print("Новый пользователь: ", content)
         return Response("RegisterOK", status=200)
+
+
+@app.route('/api/upload', methods=['POST'])
+def upload_file():
+    file = request.files['file']
+    print(file)
+    filename = secure_filename(file.filename)
+    file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+    return Response("RegisterOK", status=200)

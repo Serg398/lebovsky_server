@@ -1,6 +1,4 @@
-import json
 from pymongo import MongoClient
-from bson import json_util
 
 
 cluster = MongoClient("mongodb://127.0.0.1", 27017)
